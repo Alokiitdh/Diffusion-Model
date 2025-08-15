@@ -26,11 +26,11 @@ The process begins with a real image, such as an anime face, denoted as $x_0$. O
 
 - At each step $t$, the image $x_{t-1}$ is transformed into $x_t$ by adding noise scaled by a variance schedule $\beta_t$:
 
-  $$ q(x_t | x_{t-1}) = \mathcal{N}(x_t; \sqrt{1-\beta_t} x_{t-1}, \beta_t I) $$
+  $$q(x_t | x_{t-1}) = \mathcal{N}(x_t; \sqrt{1-\beta_t} x_{t-1}, \beta_t I)$$
 
 - After many steps, the image $x_T$ approximates isotropic Gaussian noise. A key property allows direct sampling at any timestep $t$:
 
-  $$ q(x_t | x_0) = \mathcal{N}(x_t; \sqrt{\bar{\alpha}_t} x_0, (1-\bar{\alpha}_t) I) $$
+  $$q(x_t | x_0) = \mathcal{N}(x_t; \sqrt{\bar{\alpha}_t} x_0, (1-\bar{\alpha}_t) I)$$
 
   where $\bar{\alpha}_t = \prod_{s=1}^t (1 - \beta_s)$.
 
@@ -38,7 +38,7 @@ The process begins with a real image, such as an anime face, denoted as $x_0$. O
 
 The goal is to reverse this process, starting from noise $x_T$ and reconstructing a clean image $x_0$. The reverse process is modeled as:
 
-  $$ p_\theta(x_{t-1} | x_t) = \mathcal{N}(x_{t-1}; \mu_\theta(x_t, t), \Sigma_\theta(t)) $$
+  $$p_\theta(x_{t-1} | x_t) = \mathcal{N}(x_{t-1}; \mu_\theta(x_t, t), \Sigma_\theta(t))$$
 
 A U-Net predicts the mean $\mu_\theta$ by estimating the noise component $\epsilon_\theta(x_t, t)$ in the noisy image $x_t$ at timestep $t$. The variance $\Sigma_\theta(t)$ is typically fixed based on $\beta_t$.
 
@@ -46,7 +46,7 @@ A U-Net predicts the mean $\mu_\theta$ by estimating the noise component $\epsil
 
 The model is trained to predict the noise added at each timestep. The loss function is the mean squared error between the true noise $\epsilon$ and the predicted noise $\epsilon_\theta$:
 
-  $$ L = \mathbb{E}_{x_0, t, \epsilon} \left[ \|\epsilon - \epsilon_\theta(x_t, t)\|^2 \right] $$
+  $$L = \mathbb{E}_{x_0, t, \epsilon} \left[ \|\epsilon - \epsilon_\theta(x_t, t)\|^2 \right]$$
 
 This simplifies training, as predicting noise is more stable than directly reconstructing the image.
 
@@ -56,7 +56,7 @@ To generate an image:
 - Start with random noise $x_T \sim \mathcal{N}(0, I)$.
 - Iteratively denoise using the learned model:
 
-  $$ x_{t-1} = \frac{1}{\sqrt{1-\beta_t}} \left( x_t - \frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}} \epsilon_\theta(x_t, t) \right) + \sigma_t z $$
+  $$x_{t-1} = \frac{1}{\sqrt{1-\beta_t}} \left( x_t - \frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}} \epsilon_\theta(x_t, t) \right) + \sigma_t z$$
 
   where $z$ is random Gaussian noise, and $\sigma_t$ is derived from the variance schedule.
 

@@ -18,50 +18,27 @@ This project uses a **Denoising Diffusion Probabilistic Model (DDPM)** to genera
 
 ## 📜 Theory — How DDPM Works
 
-Denoising Diffusion Probabilistic Models (DDPMs) are generative models that create images by learning to reverse a process of gradually adding noise. Here’s a breakdown of the approach:
+Denoising Diffusion Probabilistic Models (DDPMs) are generative models that create images by learning to reverse a gradual noising process.
 
 ### **Forward Process (Adding Noise)**
 
-The process begins with a real image, such as an anime face, denoted as $x_0$. Over a series of $T$ steps, small amounts of Gaussian noise are added to the image:
-
-- At each step $t$, the image $x_{t-1}$ is transformed into $x_t$ by adding noise scaled by a variance schedule $\beta_t$:
-
-  $$q(x_t | x_{t-1}) = \mathcal{N}(x_t; \sqrt{1-\beta_t} x_{t-1}, \beta_t I)$$
-
-- After many steps, the image $x_T$ approximates isotropic Gaussian noise. A key property allows direct sampling at any timestep $t$:
-
-  $$q(x_t | x_0) = \mathcal{N}(x_t; \sqrt{\bar{\alpha}_t} x_0, (1-\bar{\alpha}_t) I)$$
-
+The process starts with a real image. Over many steps, small amounts of Gaussian noise are added, controlled by a variance schedule. Eventually, the image becomes pure noise. Thanks to the process’s mathematical properties, noise can be applied in a single step for any point in the sequence.
 
 ### **Reverse Process (Denoising)**
 
-The goal is to reverse this process, starting from noise $x_T$ and reconstructing a clean image $x_0$. The reverse process is modeled as:
-
-  $$p_\theta(x_{t-1} | x_t) = \mathcal{N}(x_{t-1}; \mu_\theta(x_t, t), \Sigma_\theta(t))$$
-
-A U-Net predicts the mean $\mu_\theta$ by estimating the noise component $\epsilon_\theta(x_t, t)$ in the noisy image $x_t$ at timestep $t$. The variance $\Sigma_\theta(t)$ is typically fixed based on $\beta_t$.
+The model’s task is to reverse the noising process—starting from pure noise and step-by-step reconstructing the original image. This is achieved using a U-Net that predicts the noise present at each step, allowing the model to recover a cleaner image at the previous step.
 
 ### **Training**
 
-The model is trained to predict the noise added at each timestep. The loss function is the mean squared error between the true noise $\epsilon$ and the predicted noise $\epsilon_\theta$:
-
-  $$L=\mathbb{E}_{x_0, t, \epsilon} \left[ \|\epsilon-\epsilon_\theta(x_t, t)\|^2\right]$$
-
-This simplifies training, as predicting noise is more stable than directly reconstructing the image.
+The model is trained to predict the exact noise added at each step. This is done by comparing the true noise with the predicted noise, and adjusting the model to minimize the difference. Predicting noise directly is more stable than reconstructing the entire image.
 
 ### **Sampling**
 
-To generate an image:
-- Start with random noise $x_T \sim \mathcal{N}(0, I)$.
-- Iteratively denoise using the learned model:
-
-  $$x_{t-1} = \frac{1}{\sqrt{1-\beta_t}} \left( x_t - \frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}} \epsilon_\theta(x_t, t) \right) + \sigma_t z$$
-
-  where $z$ is random Gaussian noise, and $\sigma_t$ is derived from the variance schedule.
+To generate an image, the process starts with random noise and repeatedly applies the learned denoising steps until a coherent image emerges.
 
 ### **Why It Works**
 
-DDPMs excel because the forward process is deterministic and simple, while the reverse process leverages the U-Net’s ability to learn complex patterns, enabling high-quality image generation with stable training.
+DDPMs are effective because the forward process is simple and well-defined, while the reverse process leverages the U-Net’s ability to learn detailed structures. This combination produces high-quality, stable image generation.
 
 ---
 

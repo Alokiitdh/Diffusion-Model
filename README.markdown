@@ -32,9 +32,6 @@ The process begins with a real image, such as an anime face, denoted as $x_0$. O
 
   $$q(x_t | x_0) = \mathcal{N}(x_t; \sqrt{\bar{\alpha}_t} x_0, (1-\bar{\alpha}_t) I)$$
 
-  where ![formula](https://latex.codecogs.com/svg.latex?\bar{\alpha}_t=\prod_{s=1}^t(1-\beta_s))
-
-.
 
 ### **Reverse Process (Denoising)**
 
@@ -48,7 +45,7 @@ A U-Net predicts the mean $\mu_\theta$ by estimating the noise component $\epsil
 
 The model is trained to predict the noise added at each timestep. The loss function is the mean squared error between the true noise $\epsilon$ and the predicted noise $\epsilon_\theta$:
 
-  $$L = \mathbb{E}_{x_0, t, \epsilon} \left[ \|\epsilon - \epsilon_\theta(x_t, t)\|^2 \right]$$
+  $$L=\mathbb{E}_{x_0, t, \epsilon} \left[ \|\epsilon-\epsilon_\theta(x_t, t)\|^2\right]$$
 
 This simplifies training, as predicting noise is more stable than directly reconstructing the image.
 

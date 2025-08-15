@@ -32,7 +32,7 @@ The process begins with a real image, such as an anime face, denoted as $x_0$. O
 
   $$q(x_t | x_0) = \mathcal{N}(x_t; \sqrt{\bar{\alpha}_t} x_0, (1-\bar{\alpha}_t) I)$$
 
-  where $$({\bar{\alpha}_t}) =(\prod_{s=1}^t (1 - \beta_s))$$
+  where $$({\bar{\alpha}_t}) =\prod_{s=1}^t (1 - \beta_s)$$
 .
 
 ### **Reverse Process (Denoising)**
